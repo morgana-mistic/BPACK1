@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nuestra Boda</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    width:100vw;
+    height:100vh;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+#portada{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+#menu{
+    position:fixed;
+    bottom:80px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:20px;
+    z-index:10;
+}
+
+#menu button{
+    border:none;
+    border-radius:50px;
+    padding:18px 30px;
+    font-size:1.1rem;
+    cursor:pointer;
+    background:white;
+    box-shadow:0 4px 15px rgba(0,0,0,0.25);
+}
+
+#galeria{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:none;
+    overflow-y:auto;
+    z-index:100;
+    padding:20px;
+}
+
+#cerrar{
+    position:sticky;
+    top:10px;
+    float:right;
+    border:none;
+    border-radius:50px;
+    padding:12px 20px;
+    cursor:pointer;
+    font-size:1rem;
+}
+
+.foto{
+    width:100%;
+    max-width:900px;
+    display:block;
+    margin:20px auto;
+    border-radius:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<img id="portada" src="pareja.png" alt="Nuestra Boda">
+
+<div id="menu">
+
+    <button id="musica">
+        🎵 Nuestra Música
+    </button>
+
+    <button id="fotos">
+        📷 Nuestras Fotos
+    </button>
+
+</div>
+
+<div id="galeria">
+
+    <button id="cerrar">
+        ✕ Cerrar
+    </button>
+
+    <img class="foto" src="foto1.jpg" alt="">
+    <img class="foto" src="foto2.jpg" alt="">
+    <img class="foto" src="foto3.jpg" alt="">
+
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+
+const canciones = [
+    "tema1.mp3",
+    "tema2.mp3",
+    "tema3.mp3"
+];
+
+let indice = 0;
+
+const reproductor = document.getElementById("audio");
+
+function reproducirPlaylist(){
+
+    indice = 0;
+
+    reproductor.src = canciones[indice];
+    reproductor.play();
+
+}
+
+reproductor.addEventListener("ended", () => {
+
+    indice++;
+
+    if(indice < canciones.length){
+
+        reproductor.src = canciones[indice];
+        reproductor.play();
+
+    }
+
+});
+
+document.getElementById("musica")
+.addEventListener("click", reproducirPlaylist);
+
+document.getElementById("fotos")
+.addEventListener("click", () => {
+
+    document.getElementById("galeria").style.display = "block";
+
+});
+
+document.getElementById("cerrar")
+.addEventListener("click", () => {
+
+    document.getElementById("galeria").style.display = "none";
+
+});
+
+</script>
+
+</body>
+</html>
