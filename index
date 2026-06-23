@@ -1,169 +1,323 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Nuestra Boda</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    width:100vw;
-    height:100vh;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-}
-
-#portada{
-    max-width:100%;
-    max-height:100%;
-    object-fit:contain;
-}
-
-#menu{
-    position:fixed;
-    bottom:80px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:20px;
-    z-index:10;
-}
-
-#menu button{
-    border:none;
-    border-radius:50px;
-    padding:18px 30px;
-    font-size:1.1rem;
-    cursor:pointer;
-    background:white;
-    box-shadow:0 4px 15px rgba(0,0,0,0.25);
-}
-
-#galeria{
-    position:fixed;
-    inset:0;
-    background:white;
-    display:none;
-    overflow-y:auto;
-    z-index:100;
-    padding:20px;
-}
-
-#cerrar{
-    position:sticky;
-    top:10px;
-    float:right;
-    border:none;
-    border-radius:50px;
-    padding:12px 20px;
-    cursor:pointer;
-    font-size:1rem;
-}
-
-.foto{
-    width:100%;
-    max-width:900px;
-    display:block;
-    margin:20px auto;
-    border-radius:12px;
-}
-
-</style>
-</head>
-
-<body>
-
-<img id="portada" src="pareja.png" alt="Nuestra Boda">
-
-<div id="menu">
-
-    <button id="musica">
-        🎵 Nuestra Música
-    </button>
-
-    <button id="fotos">
-        📷 Nuestras Fotos
-    </button>
-
-</div>
-
-<div id="galeria">
-
-    <button id="cerrar">
-        ✕ Cerrar
-    </button>
-
-    <img class="foto" src="foto1.jpg" alt="">
-    <img class="foto" src="foto2.jpg" alt="">
-    <img class="foto" src="foto3.jpg" alt="">
-
-</div>
-
-<audio id="audio"></audio>
-
-<script>
-
-const canciones = [
-    "tema1.mp3",
-    "tema2.mp3",
-    "tema3.mp3"
-];
-
-let indice = 0;
-
-const reproductor = document.getElementById("audio");
-
-function reproducirPlaylist(){
-
-    indice = 0;
-
-    reproductor.src = canciones[indice];
-    reproductor.play();
-
-}
-
-reproductor.addEventListener("ended", () => {
-
-    indice++;
-
-    if(indice < canciones.length){
-
-        reproductor.src = canciones[indice];
-        reproductor.play();
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Souvenir Digital - Pack 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-});
+    body {
+      font-family: Georgia, serif;
+      background: linear-gradient(180deg, #f7f1eb 0%, #efe5dc 100%);
+      color: #3a2c2c;
+      min-height: 100vh;
+    }
 
-document.getElementById("musica")
-.addEventListener("click", reproducirPlaylist);
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+      text-align: center;
+    }
 
-document.getElementById("fotos")
-.addEventListener("click", () => {
+    .hero {
+      margin-bottom: 26px;
+    }
 
-    document.getElementById("galeria").style.display = "block";
+    .hero img {
+      width: 100%;
+      max-width: 520px;
+      border-radius: 18px;
+      display: block;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      object-fit: cover;
+    }
 
-});
+    .title {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: #5b3b3b;
+    }
 
-document.getElementById("cerrar")
-.addEventListener("click", () => {
+    .subtitle {
+      font-size: 1rem;
+      opacity: 0.85;
+      margin-bottom: 20px;
+    }
 
-    document.getElementById("galeria").style.display = "none";
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
 
-});
+    .main-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #7a4e4e;
+      color: #fff;
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+      box-shadow: 0 6px 18px rgba(122, 78, 78, 0.25);
+    }
 
-</script>
+    .main-btn:hover {
+      background: #684040;
+      transform: translateY(-1px);
+    }
 
+    .main-btn:active {
+      transform: translateY(0);
+    }
+
+    .signature {
+      margin-top: 34px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .signature a {
+      color: #7a4e4e;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(122, 78, 78, 0.4);
+    }
+
+    .signature a:hover {
+      opacity: 0.9;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fffaf7;
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 18px;
+      padding: 22px 18px 18px;
+      position: relative;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+      text-align: left;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #6b4b4b;
+      line-height: 1;
+    }
+
+    .modal-title {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      color: #5b3b3b;
+      padding-right: 30px;
+    }
+
+    /* Música */
+    .track {
+      background: #f7eee8;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .track h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #5b3b3b;
+    }
+
+    .track audio {
+      width: 100%;
+    }
+
+    /* Fotos */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .gallery img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      object-fit: cover;
+    }
+
+    /* Formulario */
+    .form-wrap {
+      width: 100%;
+      min-height: 70vh;
+    }
+
+    .form-wrap iframe {
+      width: 100%;
+      height: 75vh;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    @media (max-width: 520px) {
+      .title {
+        font-size: 1.7rem;
+      }
+
+      .main-btn {
+        font-size: 0.98rem;
+        padding: 15px 16px;
+      }
+
+      .modal-box {
+        padding: 20px 14px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <img src="pareja.png" alt="Foto de la pareja" />
+      <h1 class="title">Nuestro recuerdo</h1>
+      <p class="subtitle">Gracias por acompañarnos en este día tan especial 💛</p>
+    </section>
+
+    <section class="buttons">
+      <button class="main-btn" onclick="openModal('musicModal')">🎵 Nuestra música</button>
+      <button class="main-btn" onclick="openModal('photosModal')">📷 Nuestras fotos</button>
+      <button class="main-btn" onclick="openModal('messageModal')">💌 Dejanos un mensaje</button>
+    </section>
+
+    <div class="signature">
+      <a href="https://wa.me/5493854118422?text=Hola%20Morgana,%20vi%20tu%20souvenir%20digital%20y%20quiero%20consultarte." target="_blank" rel="noopener noreferrer">
+        Diseño digital de Morgana
+      </a>
+    </div>
+  </div>
+
+  <!-- Modal Música -->
+  <div class="modal" id="musicModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('musicModal')" aria-label="Cerrar">×</button>
+      <h2 class="modal-title">🎵 Nuestra música</h2>
+
+      <div class="track">
+        <h3>Tema 1</h3>
+        <audio controls preload="none">
+          <source src="tema1.mp3" type="audio/mpeg">
+          Tu navegador no soporta audio HTML5.
+        </audio>
+      </div>
+
+      <div class="track">
+        <h3>Tema 2</h3>
+        <audio controls preload="none">
+          <source src="tema2.mp3" type="audio/mpeg">
+          Tu navegador no soporta audio HTML5.
+        </audio>
+      </div>
+
+      <div class="track">
+        <h3>Tema 3</h3>
+        <audio controls preload="none">
+          <source src="tema3.mp3" type="audio/mpeg">
+          Tu navegador no soporta audio HTML5.
+        </audio>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Fotos -->
+  <div class="modal" id="photosModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('photosModal')" aria-label="Cerrar">×</button>
+      <h2 class="modal-title">📷 Nuestras fotos</h2>
+
+      <div class="gallery">
+        <img src="foto1.jpg" alt="Foto 1">
+        <img src="foto2.jpg" alt="Foto 2">
+        <img src="foto3.jpg" alt="Foto 3">
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Formulario -->
+  <div class="modal" id="messageModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('messageModal')" aria-label="Cerrar">×</button>
+      <h2 class="modal-title">💌 Dejanos un mensaje</h2>
+
+      <div class="form-wrap">
+        <iframe
+          src="https://tally.so/r/q4gjv9"
+          title="Formulario de mensajes"
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.addEventListener('click', function(e) {
+      document.querySelectorAll('.modal').forEach(modal => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(modal => {
+          modal.classList.remove('active');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+  </script>
 </body>
 </html>
