@@ -68,7 +68,7 @@ header p {
     opacity: 0.5;
 }
 
-/* ✨ ANIMACIÓN CORRECTA */
+/* ANIMACIÓN BIEN CERRADA */
 .fade-in {
     animation: fadeIn 0.6s ease forwards;
     opacity: 0;
@@ -153,7 +153,7 @@ function loadMessages() {
             );
 
             const dateIndex = headers.findIndex(h =>
-                h.includes("submitted") || h.includes("fecha") || h.includes("date")
+                h.includes("submitted") || h.includes("date") || h.includes("fecha")
             );
 
             data.slice(1).reverse().forEach(cols => {
@@ -183,10 +183,7 @@ function loadMessages() {
         });
 }
 
-// carga inicial
 loadMessages();
-
-// auto refresh cada 12 segundos
 setInterval(loadMessages, 12000);
 
 </script>
