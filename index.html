@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Souvenir Digital - Pack 1</title>
+  <title>Souvenir Digital</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -11,69 +12,126 @@
       padding: 0;
     }
 
+    :root {
+      --bg-1: #f8f1eb;
+      --bg-2: #efe3d8;
+      --ink: #3f2f2f;
+      --ink-soft: #6a5555;
+      --rose: #7a4e4e;
+      --rose-dark: #684040;
+      --gold: #d9b97a;
+      --gold-soft: rgba(217, 185, 122, 0.35);
+      --card: rgba(255, 250, 246, 0.82);
+      --card-strong: rgba(255, 250, 246, 0.92);
+      --shadow: 0 18px 40px rgba(74, 44, 44, 0.14);
+      --shadow-soft: 0 10px 24px rgba(74, 44, 44, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
     body {
       font-family: Georgia, serif;
-      background: linear-gradient(180deg, #f7f1eb 0%, #efe5dc 100%);
-      color: #3a2c2c;
+      color: var(--ink);
       min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.55), transparent 32%),
+        radial-gradient(circle at top right, rgba(255,255,255,0.35), transparent 28%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      background-attachment: fixed;
     }
 
     .container {
-      max-width: 680px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 24px 18px 40px;
+      padding: 28px 18px 46px;
       text-align: center;
     }
 
+    .hero-card {
+      background: var(--card);
+      border: 1px solid rgba(122, 78, 78, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 18px 18px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.28), transparent 30%),
+        radial-gradient(circle at top right, rgba(217,185,122,0.10), transparent 35%);
+      pointer-events: none;
+    }
+
     .hero {
-      margin-bottom: 26px;
+      position: relative;
+      z-index: 1;
     }
 
     .hero img {
       width: 100%;
-      max-width: 520px;
-      border-radius: 18px;
-      display: block;
-      margin: 0 auto 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      max-width: 560px;
+      aspect-ratio: 4 / 5;
       object-fit: cover;
+      border-radius: 20px;
+      display: block;
+      margin: 0 auto 24px;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.14);
+      border: 1px solid rgba(122, 78, 78, 0.10);
     }
 
     .title {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      color: #5b3b3b;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 1.08;
+      color: #5a3a3a;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
     }
 
     .subtitle {
-      font-size: 1rem;
-      opacity: 0.85;
-      margin-bottom: 20px;
+      max-width: 520px;
+      margin: 0 auto;
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      opacity: 0.95;
     }
 
     .buttons {
+      margin-top: 28px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      margin-top: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .main-btn {
+      width: 100%;
       border: none;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px 18px;
       font-size: 1rem;
       font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
-      background: #7a4e4e;
       color: #fff;
-      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
-      box-shadow: 0 6px 18px rgba(122, 78, 78, 0.25);
+      background: linear-gradient(180deg, #8b5a5a 0%, #744949 100%);
+      box-shadow: 0 10px 24px rgba(122, 78, 78, 0.24);
+      transition: transform 0.18s ease, box-shadow 0.22s ease, filter 0.22s ease;
     }
 
     .main-btn:hover {
-      background: #684040;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(122, 78, 78, 0.28);
+      filter: brightness(1.03);
     }
 
     .main-btn:active {
@@ -81,31 +139,36 @@
     }
 
     .signature {
-      margin-top: 34px;
-      font-size: 0.9rem;
-      opacity: 0.8;
+      margin-top: 22px;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      position: relative;
+      z-index: 1;
     }
 
     .signature a {
-      color: #7a4e4e;
+      color: var(--rose);
       text-decoration: none;
-      border-bottom: 1px solid rgba(122, 78, 78, 0.4);
+      border-bottom: 1px solid rgba(122, 78, 78, 0.28);
+      transition: opacity 0.2s ease;
     }
 
     .signature a:hover {
-      opacity: 0.9;
+      opacity: 0.85;
     }
 
-    /* Modal */
+    /* MODAL */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(38, 24, 24, 0.52);
       z-index: 999;
       justify-content: center;
       align-items: center;
       padding: 18px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .modal.active {
@@ -113,56 +176,74 @@
     }
 
     .modal-box {
-      background: #fffaf7;
-      width: min(760px, 100%);
+      background: var(--card-strong);
+      width: min(860px, 100%);
       max-height: 90vh;
       overflow-y: auto;
-      border-radius: 18px;
-      padding: 22px 18px 18px;
+      border-radius: 24px;
+      padding: 24px 18px 18px;
       position: relative;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+      box-shadow: 0 24px 50px rgba(0,0,0,0.24);
       text-align: left;
+      border: 1px solid rgba(122, 78, 78, 0.10);
     }
 
     .close-btn {
       position: absolute;
       top: 10px;
       right: 12px;
-      background: transparent;
+      width: 42px;
+      height: 42px;
       border: none;
+      border-radius: 999px;
+      background: rgba(122, 78, 78, 0.08);
       font-size: 1.8rem;
       cursor: pointer;
       color: #6b4b4b;
       line-height: 1;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(122, 78, 78, 0.14);
+      transform: scale(1.04);
     }
 
     .modal-title {
       text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 18px;
+      font-size: 1.55rem;
+      margin-bottom: 20px;
       color: #5b3b3b;
-      padding-right: 30px;
+      padding-right: 38px;
     }
 
-    /* Música */
+    /* MUSICA */
+    .track-list {
+      display: grid;
+      gap: 14px;
+    }
+
     .track {
-      background: #f7eee8;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
+      background: rgba(247, 238, 232, 0.9);
+      border: 1px solid rgba(122, 78, 78, 0.08);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
     }
 
     .track h3 {
       font-size: 1rem;
       margin-bottom: 10px;
       color: #5b3b3b;
+      font-weight: 600;
     }
 
     .track audio {
       width: 100%;
+      display: block;
     }
 
-    /* Fotos */
+    /* FOTOS */
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -171,13 +252,21 @@
 
     .gallery img {
       width: 100%;
+      aspect-ratio: 4 / 5;
       display: block;
-      border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      border-radius: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
       object-fit: cover;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      cursor: zoom-in;
     }
 
-    /* Formulario */
+    .gallery img:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.16);
+    }
+
+    /* FORMULARIO */
     .form-wrap {
       width: 100%;
       min-height: 70vh;
@@ -187,13 +276,72 @@
       width: 100%;
       height: 75vh;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(122, 78, 78, 0.06);
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(20, 12, 12, 0.82);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: min(92vw, 1000px);
+      max-height: 88vh;
+      border-radius: 18px;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.35);
+      object-fit: contain;
       background: #fff;
     }
 
-    @media (max-width: 520px) {
+    .lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 1.8rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 20px 14px 34px;
+      }
+
+      .hero-card {
+        padding: 14px 14px 22px;
+      }
+
+      .hero img {
+        margin-bottom: 20px;
+      }
+
       .title {
-        font-size: 1.7rem;
+        font-size: 1.9rem;
+      }
+
+      .subtitle {
+        font-size: 0.97rem;
       }
 
       .main-btn {
@@ -202,28 +350,40 @@
       }
 
       .modal-box {
-        padding: 20px 14px 16px;
+        padding: 22px 14px 16px;
+        border-radius: 20px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <section class="hero">
-      <img src="pareja.png" alt="Foto de la pareja" />
-     
-    </section>
+    <div class="hero-card">
+      <section class="hero">
+        <img src="pareja.png" alt="Foto de la pareja" />
+        <h1 class="title">Nuestro recuerdo digital</h1>
+        <p class="subtitle">
+          Gracias por acompañarnos en este día tan especial. Acá podés escuchar nuestra música,
+          recorrer algunas fotos y dejarnos un mensaje para guardar este momento con nosotros.
+        </p>
+      </section>
 
-    <section class="buttons">
-      <button class="main-btn" onclick="openModal('musicModal')">🎵 Nuestra música</button>
-      <button class="main-btn" onclick="openModal('photosModal')">📷 Nuestras fotos</button>
-      <button class="main-btn" onclick="openModal('messageModal')">💌 Dejanos un mensaje</button>
-    </section>
+      <section class="buttons">
+        <button class="main-btn" onclick="openModal('musicModal')">🎵 Nuestra música</button>
+        <button class="main-btn" onclick="openModal('photosModal')">📷 Nuestras fotos</button>
+        <button class="main-btn" onclick="openModal('messageModal')">💌 Dejanos un mensaje</button>
+      </section>
 
-    <div class="signature">
-      <a href="https://wa.me/5493854118422?text=Hola%20Morgana,%20vi%20tu%20souvenir%20digital%20y%20quiero%20consultarte." target="_blank" rel="noopener noreferrer">
-        Diseño digital de Morgana
-      </a>
+      <div class="signature">
+        <a href="https://wa.me/5493854118422?text=Hola%20Morgana,%20vi%20tu%20souvenir%20digital%20y%20quiero%20consultarte." target="_blank" rel="noopener noreferrer">
+          Diseño digital de Morgana
+        </a>
+      </div>
     </div>
   </div>
 
@@ -233,28 +393,30 @@
       <button class="close-btn" onclick="closeModal('musicModal')" aria-label="Cerrar">×</button>
       <h2 class="modal-title">🎵 Nuestra música</h2>
 
-      <div class="track">
-        <h3>Tema 1</h3>
-        <audio controls preload="none">
-          <source src="tema1.mp3" type="audio/mpeg">
-          Tu navegador no soporta audio HTML5.
-        </audio>
-      </div>
+      <div class="track-list">
+        <div class="track">
+          <h3>Tema 1</h3>
+          <audio controls preload="none">
+            <source src="tema1.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5.
+          </audio>
+        </div>
 
-      <div class="track">
-        <h3>Tema 2</h3>
-        <audio controls preload="none">
-          <source src="tema2.mp3" type="audio/mpeg">
-          Tu navegador no soporta audio HTML5.
-        </audio>
-      </div>
+        <div class="track">
+          <h3>Tema 2</h3>
+          <audio controls preload="none">
+            <source src="tema2.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5.
+          </audio>
+        </div>
 
-      <div class="track">
-        <h3>Tema 3</h3>
-        <audio controls preload="none">
-          <source src="tema3.mp3" type="audio/mpeg">
-          Tu navegador no soporta audio HTML5.
-        </audio>
+        <div class="track">
+          <h3>Tema 3</h3>
+          <audio controls preload="none">
+            <source src="tema3.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5.
+          </audio>
+        </div>
       </div>
     </div>
   </div>
@@ -266,9 +428,9 @@
       <h2 class="modal-title">📷 Nuestras fotos</h2>
 
       <div class="gallery">
-        <img src="foto1.jpg" alt="Foto 1">
-        <img src="foto2.jpg" alt="Foto 2">
-        <img src="foto3.jpg" alt="Foto 3">
+        <img src="foto1.jpg" alt="Foto 1" onclick="openLightbox(this.src)">
+        <img src="foto2.jpg" alt="Foto 2" onclick="openLightbox(this.src)">
+        <img src="foto3.jpg" alt="Foto 3" onclick="openLightbox(this.src)">
       </div>
     </div>
   </div>
@@ -289,6 +451,12 @@
     </div>
   </div>
 
+  <!-- Lightbox fotos -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Cerrar">×</button>
+    <img id="lightboxImage" src="" alt="Foto ampliada">
+  </div>
+
   <script>
     function openModal(id) {
       document.getElementById(id).classList.add('active');
@@ -300,6 +468,18 @@
       document.body.style.overflow = '';
     }
 
+    function openLightbox(src) {
+      document.getElementById('lightboxImage').src = src;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.getElementById('lightboxImage').src = '';
+      document.body.style.overflow = '';
+    }
+
     window.addEventListener('click', function(e) {
       document.querySelectorAll('.modal').forEach(modal => {
         if (e.target === modal) {
@@ -307,6 +487,11 @@
           document.body.style.overflow = '';
         }
       });
+
+      const lightbox = document.getElementById('lightbox');
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
     });
 
     window.addEventListener('keydown', function(e) {
@@ -314,7 +499,12 @@
         document.querySelectorAll('.modal.active').forEach(modal => {
           modal.classList.remove('active');
         });
-        document.body.style.overflow = '';
+
+        if (document.getElementById('lightbox').classList.contains('active')) {
+          closeLightbox();
+        } else {
+          document.body.style.overflow = '';
+        }
       }
     });
   </script>
