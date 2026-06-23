@@ -135,7 +135,7 @@ function parseCSV(text) {
 
 function loadMessages() {
 
-    fetch(SHEET_URL)
+    fetch(SHEET_URL + "&t=" + Date.now())
         .then(r => r.text())
         .then(text => {
 
@@ -184,7 +184,7 @@ function loadMessages() {
 }
 
 loadMessages();
-setInterval(loadMessages, 12000);
+setInterval(loadMessages, 25000);
 
 </script>
 
