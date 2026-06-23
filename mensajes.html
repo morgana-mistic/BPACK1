@@ -9,10 +9,11 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0f0f12;
+    background: radial-gradient(circle at top, #1a1a22, #0b0b0f);
     color: #fff;
 }
 
+/* HEADER */
 header {
     text-align: center;
     padding: 60px 20px 30px;
@@ -29,6 +30,7 @@ header p {
     margin-top: 10px;
 }
 
+/* GRID */
 .container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -38,37 +40,47 @@ header p {
     margin: auto;
 }
 
+/* CARD PREMIUM (GLASS EFFECT) */
 .card {
-    background: #1b1b22;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.25s ease, background 0.25s ease;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.09);
 }
 
+/* NAME */
 .name {
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 10px;
-    color: #ffd36e;
+    color: #ffd98a;
+    font-size: 15px;
+    letter-spacing: 0.5px;
 }
 
+/* MESSAGE */
 .message {
-    font-size: 14px;
-    line-height: 1.5;
-    opacity: 0.9;
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.92;
 }
 
+/* DATE */
 .date {
-    margin-top: 15px;
+    margin-top: 12px;
     font-size: 11px;
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
-/* ANIMACIÓN BIEN CERRADA */
+/* ANIMATION */
 .fade-in {
     animation: fadeIn 0.6s ease forwards;
     opacity: 0;
