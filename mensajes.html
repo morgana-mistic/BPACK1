@@ -87,8 +87,8 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvX
 const container = document.getElementById("messages");
 
 function parseCSV(line) {
-    let result = [];
-    let current = "";
+    let res = [];
+    let cur = "";
     let inside = false;
 
     for (let i = 0; i < line.length; i++) {
@@ -97,15 +97,20 @@ function parseCSV(line) {
         if (c === '"' && line[i - 1] !== "\\") {
             inside = !inside;
         } else if (c === "," && !inside) {
-            result.push(current);
-            current = "";
+            res.push(cur);
+            cur = "";
         } else {
-            current += c;
+            cur += c;
         }
     }
 
-    result.push(current);
-    return result.map(x => x.replace(/"/g, "").trim());
+    res.push(cur);
+    return res.map(v => v.replace(/"/g, "").trim());
+}
+
+// 🔥 detecta si algo es ID tipo RGjkM2d
+function isID(text) {
+    return /^[A-Za-z0-9]{5,}$/.test(text) && text.length < 15;
 }
 
 fetch(SHEET_URL)
@@ -118,17 +123,12 @@ fetch(SHEET_URL)
 
     const headers = parseCSV(rows[0].toLowerCase());
 
-    // 🔥 BUSQUEDA INTELIGENTE DE COLUMNAS
     const nameIndex = headers.findIndex(h =>
         h.includes("name") || h.includes("nombre")
     );
 
-    const messageIndex = headers.findIndex(h =>
-        h.includes("message") || h.includes("mensaje")
-    );
-
     const dateIndex = headers.findIndex(h =>
-        h.includes("date") || h.includes("fecha")
+        h.includes("date") || h.includes("fecha") || h.includes("time")
     );
 
     rows.slice(1).forEach(row => {
@@ -137,13 +137,27 @@ fetch(SHEET_URL)
 
         const cols = parseCSV(row);
 
-        const name = (cols[nameIndex] || "").trim();
-        const message = (cols[messageIndex] || "").trim();
-        const date = (cols[dateIndex] || "").trim();
+        let name = cols[nameIndex] || "";
+        let date = cols[dateIndex] || "";
 
-        // 🚨 FILTRO CLAVE: elimina IDs tipo RGjkM2d
-        if (!message || message.length < 2) return;
-        if (name.length < 2 && message.length < 2) return;
+        // 🔥 BUSCAR MENSAJE REAL (NO ID)
+        let message = "";
+
+        cols.forEach(col => {
+            const clean = col.trim();
+
+            if (!clean) return;
+            if (clean === name) return;
+            if (clean === date) return;
+            if (isID(clean)) return; // 👈 elimina RGjkM2d
+
+            // el mensaje suele ser el texto más largo
+            if (clean.length > message.length) {
+                message = clean;
+            }
+        });
+
+        if (!message) return;
 
         const card = document.createElement("div");
         card.className = "card";
@@ -164,7 +178,5 @@ fetch(SHEET_URL)
   });
 
 </script>
-</script>
-
 </body>
 </html>
