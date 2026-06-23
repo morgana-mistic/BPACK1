@@ -45,21 +45,7 @@ header p {
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     transition: transform 0.2s ease;
 }
-.fade-in {
-    animation: fadeIn 0.6s ease forwards;
-    opacity: 0;
-}
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 .card:hover {
     transform: translateY(-5px);
 }
@@ -81,19 +67,8 @@ header p {
     font-size: 11px;
     opacity: 0.5;
 }
-</style>
 
-</head>
-
-<body>
-
-<header>
-    <h1>💌 Mensajes para los Novios</h1>
-    <p>Palabras de amor, alegría y recuerdos de su día especial</p>
-</header>
-
-<div class="container" id="messages"></div>
-
+/* ✨ ANIMACIÓN CORRECTA */
 .fade-in {
     animation: fadeIn 0.6s ease forwards;
     opacity: 0;
@@ -109,5 +84,112 @@ header p {
         transform: translateY(0);
     }
 }
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>💌 Mensajes para los Novios</h1>
+    <p>Palabras de amor, alegría y recuerdos de su día especial</p>
+</header>
+
+<div class="container" id="messages"></div>
+
+<script>
+
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvXS4rR2Sh87zs-VqaMsfi1t2S2GhiPbAaTC6SF7YL1_h7MCdF4BSbjJ7adHGuglgAr_j/pub?gid=0&single=true&output=csv";
+
+const container = document.getElementById("messages");
+
+function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let current = "";
+    let inside = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+
+        if (c === '"' && text[i - 1] !== "\\") {
+            inside = !inside;
+        } else if (c === "," && !inside) {
+            row.push(current.replace(/"/g, "").trim());
+            current = "";
+        } else if (c === "\n" && !inside) {
+            row.push(current.replace(/"/g, "").trim());
+            rows.push(row);
+            row = [];
+            current = "";
+        } else {
+            current += c;
+        }
+    }
+
+    row.push(current.replace(/"/g, "").trim());
+    rows.push(row);
+
+    return rows;
+}
+
+function loadMessages() {
+
+    fetch(SHEET_URL)
+        .then(r => r.text())
+        .then(text => {
+
+            container.innerHTML = "";
+
+            const data = parseCSV(text);
+            const headers = data[0].map(h => h.toLowerCase());
+
+            const nameIndex = headers.findIndex(h =>
+                h.includes("nombre") || h.includes("name")
+            );
+
+            const messageIndex = headers.findIndex(h =>
+                h.includes("untitled long answer field")
+            );
+
+            const dateIndex = headers.findIndex(h =>
+                h.includes("submitted") || h.includes("fecha") || h.includes("date")
+            );
+
+            data.slice(1).reverse().forEach(cols => {
+
+                const name = cols[nameIndex] || "Invitado";
+                const message = cols[messageIndex] || "";
+                const date = cols[dateIndex] || "";
+
+                if (!message) return;
+
+                const card = document.createElement("div");
+                card.className = "card fade-in";
+
+                card.innerHTML = `
+                    <div class="name">${name}</div>
+                    <div class="message">${message}</div>
+                    <div class="date">${date}</div>
+                `;
+
+                container.appendChild(card);
+            });
+
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML = "<p style='opacity:0.6'>Error cargando mensajes</p>";
+        });
+}
+
+// carga inicial
+loadMessages();
+
+// auto refresh cada 12 segundos
+setInterval(loadMessages, 12000);
+
+</script>
+
 </body>
 </html>
