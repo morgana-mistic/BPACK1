@@ -86,26 +86,34 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvX
 
 const container = document.getElementById("messages");
 
-function parseCSV(line) {
-    let res = [];
-    let cur = "";
+function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let current = "";
     let inside = false;
 
-    for (let i = 0; i < line.length; i++) {
-        const c = line[i];
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
 
-        if (c === '"' && line[i - 1] !== "\\") {
+        if (c === '"' && text[i - 1] !== "\\") {
             inside = !inside;
         } else if (c === "," && !inside) {
-            res.push(cur);
-            cur = "";
+            row.push(current.replace(/"/g, "").trim());
+            current = "";
+        } else if (c === "\n" && !inside) {
+            row.push(current.replace(/"/g, "").trim());
+            rows.push(row);
+            row = [];
+            current = "";
         } else {
-            cur += c;
+            current += c;
         }
     }
 
-    res.push(cur);
-    return res.map(v => v.replace(/"/g, "").trim());
+    row.push(current.replace(/"/g, "").trim());
+    rows.push(row);
+
+    return rows;
 }
 
 fetch(SHEET_URL)
@@ -114,52 +122,27 @@ fetch(SHEET_URL)
 
     container.innerHTML = "";
 
-    const rows = text.trim().split("\n");
+    const data = parseCSV(text);
 
-    const headers = parseCSV(rows[0]).map(h => h.toLowerCase());
+    const headers = data[0].map(h => h.toLowerCase());
 
-    // 🔥 detectar columnas reales
     const nameIndex = headers.findIndex(h =>
-        h.includes("name") || h.includes("nombre")
-    );
-
-    const dateIndex = headers.findIndex(h =>
-        h.includes("date") || h.includes("fecha") || h.includes("time")
+        h.includes("nombre") || h.includes("name")
     );
 
     const messageIndex = headers.findIndex(h =>
-        h.includes("message") ||
-        h.includes("mensaje") ||
-        h.includes("say") ||
-        h.includes("comment") ||
-        h.includes("texto")
+        h.includes("untitled long answer field") // 👈 ESTE ES TU MENSAJE REAL
     );
 
-    rows.slice(1).forEach(row => {
+    const dateIndex = headers.findIndex(h =>
+        h.includes("submitted") || h.includes("date") || h.includes("fecha")
+    );
 
-        if (!row.trim()) return;
-
-        const cols = parseCSV(row);
+    data.slice(1).forEach(cols => {
 
         const name = cols[nameIndex] || "Invitado";
+        const message = cols[messageIndex] || "";
         const date = cols[dateIndex] || "";
-
-        // 🔥 ESTE ES EL PUNTO CRÍTICO
-        let message = "";
-
-        if (messageIndex >= 0) {
-            message = cols[messageIndex] || "";
-        }
-
-        // 🚨 fallback SOLO si no se detecta columna
-        if (!message) {
-            message = cols.find(c =>
-                c &&
-                c !== name &&
-                c !== date &&
-                !/^[A-Za-z0-9]{4,}$/.test(c) // elimina IDs tipo RGjkM2d
-            ) || "";
-        }
 
         if (!message) return;
 
@@ -178,7 +161,7 @@ fetch(SHEET_URL)
   })
   .catch(err => {
     console.error(err);
-    container.innerHTML = "<p style='opacity:0.6'>No se pudieron cargar los mensajes</p>";
+    container.innerHTML = "<p style='opacity:0.6'>Error cargando mensajes</p>";
   });
 
 </script>
