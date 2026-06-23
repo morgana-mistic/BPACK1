@@ -81,39 +81,46 @@ header p {
 <div class="container" id="messages"></div>
 
 <script>
-// 👉 Acá después conectás tus datos del Google Sheet
-const data = [
-    {
-        name: "María",
-        message: "Les deseo toda la felicidad del mundo en esta nueva etapa 💖",
-        date: "2026-06-23"
-    },
-    {
-        name: "Juan",
-        message: "Que este amor crezca cada día más. ¡Felicitaciones!",
-        date: "2026-06-23"
-    },
-    {
-        name: "Lucía",
-        message: "Hermosa ceremonia, fue mágico estar ahí ✨",
-        date: "2026-06-23"
-    }
-];
+
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvXS4rR2Sh87zs-VqaMsfi1t2S2GhiPbAaTC6SF7YL1_h7MCdF4BSbjJ7adHGuglgAr_j/pub?gid=0&single=true&output=csv";
 
 const container = document.getElementById("messages");
 
-data.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card";
+fetch(SHEET_URL)
+  .then(res => res.text())
+  .then(text => {
 
-    card.innerHTML = `
-        <div class="name">${item.name}</div>
-        <div class="message">${item.message}</div>
-        <div class="date">${item.date}</div>
-    `;
+    const rows = text.trim().split("\n").slice(1);
 
-    container.appendChild(card);
-});
+    rows.forEach(row => {
+
+      const firstComma = row.indexOf(",");
+      const secondComma = row.indexOf(",", firstComma + 1);
+
+      const name = row.slice(0, firstComma)?.replace(/"/g, "");
+      const message = row.slice(firstComma + 1, secondComma)?.replace(/"/g, "");
+      const date = row.slice(secondComma + 1)?.replace(/"/g, "");
+
+      if (!name || !message) return;
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div class="name">${name}</div>
+        <div class="message">${message}</div>
+        <div class="date">${date || ""}</div>
+      `;
+
+      container.appendChild(card);
+    });
+
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = "<p style='opacity:0.6; text-align:center;'>No se pudieron cargar los mensajes.</p>";
+  });
+
 </script>
 
 </body>
