@@ -82,69 +82,78 @@ header p {
 
 <script>
 
+<script>
+
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvXS4rR2Sh87zs-VqaMsfi1t2S2GhiPbAaTC6SF7YL1_h7MCdF4BSbjJ7adHGuglgAr_j/pub?gid=0&single=true&output=csv";
 
 const container = document.getElementById("messages");
 
-function parseCSVLine(line) {
-    // separa respetando comillas
-    const result = [];
+function parseCSV(line) {
+    let result = [];
     let current = "";
-    let insideQuotes = false;
+    let inside = false;
 
     for (let i = 0; i < line.length; i++) {
-        const char = line[i];
+        const c = line[i];
 
-        if (char === '"' && line[i - 1] !== "\\") {
-            insideQuotes = !insideQuotes;
-        } else if (char === "," && !insideQuotes) {
+        if (c === '"' && line[i - 1] !== "\\") {
+            inside = !inside;
+        } else if (c === "," && !inside) {
             result.push(current);
             current = "";
         } else {
-            current += char;
+            current += c;
         }
     }
 
     result.push(current);
-    return result.map(v => v.replace(/"/g, "").trim());
+    return result.map(x => x.replace(/"/g, "").trim());
 }
 
 fetch(SHEET_URL)
-  .then(res => res.text())
+  .then(r => r.text())
   .then(text => {
 
     container.innerHTML = "";
 
     const rows = text.trim().split("\n");
-    const headers = parseCSVLine(rows[0].toLowerCase());
 
-    const nameIndex = headers.findIndex(h => h.includes("name") || h.includes("nombre"));
-    const messageIndex = headers.findIndex(h => h.includes("message") || h.includes("mensaje"));
-    const dateIndex = headers.findIndex(h => h.includes("date") || h.includes("fecha"));
+    const headers = parseCSV(rows[0].toLowerCase());
 
-    const nIdx = nameIndex >= 0 ? nameIndex : 0;
-    const mIdx = messageIndex >= 0 ? messageIndex : 1;
-    const dIdx = dateIndex >= 0 ? dateIndex : 2;
+    // 🔥 BUSQUEDA INTELIGENTE DE COLUMNAS
+    const nameIndex = headers.findIndex(h =>
+        h.includes("name") || h.includes("nombre")
+    );
+
+    const messageIndex = headers.findIndex(h =>
+        h.includes("message") || h.includes("mensaje")
+    );
+
+    const dateIndex = headers.findIndex(h =>
+        h.includes("date") || h.includes("fecha")
+    );
 
     rows.slice(1).forEach(row => {
 
         if (!row.trim()) return;
 
-        const cols = parseCSVLine(row);
+        const cols = parseCSV(row);
 
-        const name = cols[nIdx] || "Invitado";
-        const message = cols[mIdx] || "";
-        const date = cols[dIdx] || "";
+        const name = (cols[nameIndex] || "").trim();
+        const message = (cols[messageIndex] || "").trim();
+        const date = (cols[dateIndex] || "").trim();
 
-        if (!message) return;
+        // 🚨 FILTRO CLAVE: elimina IDs tipo RGjkM2d
+        if (!message || message.length < 2) return;
+        if (name.length < 2 && message.length < 2) return;
 
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
-            <div class="name">${name}</div>
+            <div class="name">${name || "Invitado"}</div>
             <div class="message">${message}</div>
-            <div class="date">${date}</div>
+            <div class="date">${date || ""}</div>
         `;
 
         container.appendChild(card);
@@ -153,9 +162,10 @@ fetch(SHEET_URL)
   })
   .catch(err => {
     console.error(err);
-    container.innerHTML = "<p style='opacity:0.6; text-align:center;'>No se pudieron cargar los mensajes.</p>";
+    container.innerHTML = "<p style='opacity:0.6'>No se pudieron cargar los mensajes</p>";
   });
 
+</script>
 </script>
 
 </body>
