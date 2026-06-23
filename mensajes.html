@@ -86,33 +86,68 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvX
 
 const container = document.getElementById("messages");
 
+function parseCSVLine(line) {
+    // separa respetando comillas
+    const result = [];
+    let current = "";
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"' && line[i - 1] !== "\\") {
+            insideQuotes = !insideQuotes;
+        } else if (char === "," && !insideQuotes) {
+            result.push(current);
+            current = "";
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current);
+    return result.map(v => v.replace(/"/g, "").trim());
+}
+
 fetch(SHEET_URL)
   .then(res => res.text())
   .then(text => {
 
-    const rows = text.trim().split("\n").slice(1);
+    container.innerHTML = "";
 
-    rows.forEach(row => {
+    const rows = text.trim().split("\n");
+    const headers = parseCSVLine(rows[0].toLowerCase());
 
-      const firstComma = row.indexOf(",");
-      const secondComma = row.indexOf(",", firstComma + 1);
+    const nameIndex = headers.findIndex(h => h.includes("name") || h.includes("nombre"));
+    const messageIndex = headers.findIndex(h => h.includes("message") || h.includes("mensaje"));
+    const dateIndex = headers.findIndex(h => h.includes("date") || h.includes("fecha"));
 
-      const name = row.slice(0, firstComma)?.replace(/"/g, "");
-      const message = row.slice(firstComma + 1, secondComma)?.replace(/"/g, "");
-      const date = row.slice(secondComma + 1)?.replace(/"/g, "");
+    const nIdx = nameIndex >= 0 ? nameIndex : 0;
+    const mIdx = messageIndex >= 0 ? messageIndex : 1;
+    const dIdx = dateIndex >= 0 ? dateIndex : 2;
 
-      if (!name || !message) return;
+    rows.slice(1).forEach(row => {
 
-      const card = document.createElement("div");
-      card.className = "card";
+        if (!row.trim()) return;
 
-      card.innerHTML = `
-        <div class="name">${name}</div>
-        <div class="message">${message}</div>
-        <div class="date">${date || ""}</div>
-      `;
+        const cols = parseCSVLine(row);
 
-      container.appendChild(card);
+        const name = cols[nIdx] || "Invitado";
+        const message = cols[mIdx] || "";
+        const date = cols[dIdx] || "";
+
+        if (!message) return;
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <div class="name">${name}</div>
+            <div class="message">${message}</div>
+            <div class="date">${date}</div>
+        `;
+
+        container.appendChild(card);
     });
 
   })
