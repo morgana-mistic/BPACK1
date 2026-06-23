@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gracias por tu mensaje</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+      background: linear-gradient(180deg, #f7f1eb 0%, #efe5dc 100%);
+      color: #4a3434;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .card {
+      max-width: 560px;
+      width: 100%;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 36px 24px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 14px;
+      color: #6b4747;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    a.button {
+      display: inline-block;
+      background: #7a4e4e;
+      color: white;
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 600;
+      transition: background .2s ease;
+    }
+
+    a.button:hover {
+      background: #684040;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Gracias 💌</h1>
+    <p>Tu mensaje fue enviado con éxito.<br>Gracias por acompañarnos y dejarnos unas palabras en este recuerdo tan especial.</p>
+    <a class="button" href="./">Volver al inicio</a>
+  </div>
+</body>
+</html>
