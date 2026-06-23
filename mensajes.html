@@ -168,7 +168,7 @@ function loadMessages() {
                 h.includes("submitted") || h.includes("date") || h.includes("fecha")
             );
 
-            data.slice(1).reverse().forEach(cols => {
+            data.slice(1).forEach(cols => {
 
                 const name = cols[nameIndex] || "Invitado";
                 const message = cols[messageIndex] || "";
