@@ -46,7 +46,7 @@ header p {
     margin: auto;
 }
 
-/* CARD PRO */
+/* CARD */
 .card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 215, 130, 0.15);
@@ -75,6 +75,8 @@ header p {
     font-size: 15px;
     line-height: 1.6;
     opacity: 0.92;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .date {
@@ -112,7 +114,6 @@ header p {
 <div class="container" id="messages"></div>
 
 <script>
-
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRMxc6lrRDsvXS4rR2Sh87zs-VqaMsfi1t2S2GhiPbAaTC6SF7YL1_h7MCdF4BSbjJ7adHGuglgAr_j/pub?gid=0&single=true&output=csv";
 
 const container = document.getElementById("messages");
@@ -121,58 +122,83 @@ function parseCSV(text) {
     const rows = [];
     let row = [];
     let current = "";
-    let inside = false;
+    let insideQuotes = false;
 
     for (let i = 0; i < text.length; i++) {
-        const c = text[i];
+        const char = text[i];
+        const nextChar = text[i + 1];
 
-        if (c === '"' && text[i - 1] !== "\\") {
-            inside = !inside;
-        } else if (c === "," && !inside) {
-            row.push(current.replace(/"/g, "").trim());
+        if (char === '"') {
+            // Comillas escapadas ""
+            if (insideQuotes && nextChar === '"') {
+                current += '"';
+                i++;
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === "," && !insideQuotes) {
+            row.push(current.trim());
             current = "";
-        } else if (c === "\n" && !inside) {
-            row.push(current.replace(/"/g, "").trim());
+        } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+            if (char === "\r" && nextChar === "\n") i++; // manejar CRLF
+            row.push(current.trim());
             rows.push(row);
             row = [];
             current = "";
         } else {
-            current += c;
+            current += char;
         }
     }
 
-    row.push(current.replace(/"/g, "").trim());
-    rows.push(row);
+    if (current.length > 0 || row.length > 0) {
+        row.push(current.trim());
+        rows.push(row);
+    }
 
     return rows;
 }
 
-function loadMessages() {
+function escapeHtml(text) {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
+function loadMessages() {
     fetch(SHEET_URL + "&t=" + Date.now())
         .then(r => r.text())
         .then(text => {
-
             const data = parseCSV(text);
-            const headers = data[0].map(h => h.toLowerCase());
+            if (!data || data.length < 2) return;
+
+            const headers = data[0].map(h => h.toLowerCase().trim());
 
             const nameIndex = headers.findIndex(h =>
                 h.includes("nombre") || h.includes("name")
             );
 
             const messageIndex = headers.findIndex(h =>
-                h.includes("untitled long answer field")
+                h.includes("untitled long answer field") || h.includes("mensaje")
             );
 
             const dateIndex = headers.findIndex(h =>
                 h.includes("submitted") || h.includes("date") || h.includes("fecha")
             );
 
-            data.slice(1).forEach(cols => {
+            // IMPORTANTE:
+            // vaciamos y volvemos a dibujar TODO para evitar duplicados
+            container.innerHTML = "";
 
-                const name = cols[nameIndex] || "Invitado";
-                const message = cols[messageIndex] || "";
-                const date = cols[dateIndex] || "";
+            // invertimos el orden para que el MÁS NUEVO quede ARRIBA
+            const rows = data.slice(1).reverse();
+
+            rows.forEach(cols => {
+                const name = (cols[nameIndex] || "Invitado").trim();
+                const message = (cols[messageIndex] || "").trim();
+                const date = (cols[dateIndex] || "").trim();
 
                 if (!message) return;
 
@@ -180,23 +206,21 @@ function loadMessages() {
                 card.className = "card fade-in";
 
                 card.innerHTML = `
-                    <div class="name">${name}</div>
-                    <div class="message">${message}</div>
-                    <div class="date">${date}</div>
+                    <div class="name">${escapeHtml(name)}</div>
+                    <div class="message">${escapeHtml(message)}</div>
+                    <div class="date">${escapeHtml(date)}</div>
                 `;
 
-          container.appendChild(card);
+                container.appendChild(card);
             });
-
         })
         .catch(err => {
-            console.error(err);
+            console.error("Error cargando mensajes:", err);
         });
 }
 
 loadMessages();
 setInterval(loadMessages, 20000);
-
 </script>
 
 </body>
