@@ -18,7 +18,6 @@
       --bg-3: #1b1620;
       --card: rgba(23, 23, 31, 0.86);
       --card-2: rgba(30, 30, 40, 0.92);
-      --card-soft: rgba(255, 255, 255, 0.04);
       --border: rgba(255, 222, 173, 0.14);
       --border-strong: rgba(255, 222, 173, 0.24);
       --gold: #f0d39a;
@@ -431,7 +430,8 @@
           </span>
         </button>
 
-        <button class="main-btn" onclick="window.location.href='mensajes.html'">
+        <!-- ESTE BLOQUE SE MUESTRA U OCULTA AUTOMÁTICAMENTE SEGÚN LA VARIABLE DEL SCRIPT -->
+        <button class="main-btn" id="wallButton" onclick="window.location.href='mensajes.html'">
           <span class="btn-icon">✨</span>
           <span class="btn-content">
             <span class="btn-title">Muro de mensajes</span>
@@ -519,6 +519,19 @@
   </div>
 
   <script>
+    /************************************************************
+     * CONFIGURACIÓN RÁPIDA
+     * true  = mostrar botón "Muro de mensajes"
+     * false = ocultar botón "Muro de mensajes"
+     ************************************************************/
+    const SHOW_WALL_BUTTON = true;
+
+    const wallButton = document.getElementById('wallButton');
+
+    if (!SHOW_WALL_BUTTON && wallButton) {
+      wallButton.style.display = 'none';
+    }
+
     function openModal(id) {
       document.getElementById(id).classList.add('active');
       document.body.style.overflow = 'hidden';
