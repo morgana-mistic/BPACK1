@@ -9,11 +9,18 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: radial-gradient(circle at top, #1a1a22, #0b0b0f);
+    background: linear-gradient(-45deg, #0b0b0f, #1a1a22, #0f0f18, #1c1c28);
+    background-size: 400% 400%;
+    animation: bgMove 12s ease infinite;
     color: #fff;
 }
 
-/* HEADER */
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 header {
     text-align: center;
     padding: 60px 20px 30px;
@@ -30,7 +37,6 @@ header p {
     margin-top: 10px;
 }
 
-/* GRID */
 .container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -40,24 +46,23 @@ header p {
     margin: auto;
 }
 
-/* CARD PREMIUM (GLASS EFFECT) */
+/* CARD PRO */
 .card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 215, 130, 0.15);
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: transform 0.25s ease, background 0.25s ease;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    background: rgba(255, 255, 255, 0.09);
+    transform: translateY(-8px);
+    border-color: rgba(255, 215, 130, 0.35);
 }
 
-/* NAME */
 .name {
     font-weight: 600;
     margin-bottom: 10px;
@@ -66,21 +71,18 @@ header p {
     letter-spacing: 0.5px;
 }
 
-/* MESSAGE */
 .message {
     font-size: 15px;
     line-height: 1.6;
     opacity: 0.92;
 }
 
-/* DATE */
 .date {
     margin-top: 12px;
     font-size: 11px;
     opacity: 0.45;
 }
 
-/* ANIMATION */
 .fade-in {
     animation: fadeIn 0.6s ease forwards;
     opacity: 0;
@@ -151,8 +153,6 @@ function loadMessages() {
         .then(r => r.text())
         .then(text => {
 
-            container.innerHTML = "";
-
             const data = parseCSV(text);
             const headers = data[0].map(h => h.toLowerCase());
 
@@ -185,18 +185,17 @@ function loadMessages() {
                     <div class="date">${date}</div>
                 `;
 
-                container.appendChild(card);
+                container.prepend(card);
             });
 
         })
         .catch(err => {
             console.error(err);
-            container.innerHTML = "<p style='opacity:0.6'>Error cargando mensajes</p>";
         });
 }
 
 loadMessages();
-setInterval(loadMessages, 25000);
+setInterval(loadMessages, 20000);
 
 </script>
 
