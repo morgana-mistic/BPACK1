@@ -108,11 +108,6 @@ function parseCSV(line) {
     return res.map(v => v.replace(/"/g, "").trim());
 }
 
-// 🔥 detecta si algo es ID tipo RGjkM2d
-function isID(text) {
-    return /^[A-Za-z0-9]{5,}$/.test(text) && text.length < 15;
-}
-
 fetch(SHEET_URL)
   .then(r => r.text())
   .then(text => {
@@ -121,8 +116,9 @@ fetch(SHEET_URL)
 
     const rows = text.trim().split("\n");
 
-    const headers = parseCSV(rows[0].toLowerCase());
+    const headers = parseCSV(rows[0]).map(h => h.toLowerCase());
 
+    // 🔥 detectar columnas reales
     const nameIndex = headers.findIndex(h =>
         h.includes("name") || h.includes("nombre")
     );
@@ -131,31 +127,39 @@ fetch(SHEET_URL)
         h.includes("date") || h.includes("fecha") || h.includes("time")
     );
 
+    const messageIndex = headers.findIndex(h =>
+        h.includes("message") ||
+        h.includes("mensaje") ||
+        h.includes("say") ||
+        h.includes("comment") ||
+        h.includes("texto")
+    );
+
     rows.slice(1).forEach(row => {
 
         if (!row.trim()) return;
 
         const cols = parseCSV(row);
 
-        let name = cols[nameIndex] || "";
-        let date = cols[dateIndex] || "";
+        const name = cols[nameIndex] || "Invitado";
+        const date = cols[dateIndex] || "";
 
-        // 🔥 BUSCAR MENSAJE REAL (NO ID)
+        // 🔥 ESTE ES EL PUNTO CRÍTICO
         let message = "";
 
-        cols.forEach(col => {
-            const clean = col.trim();
+        if (messageIndex >= 0) {
+            message = cols[messageIndex] || "";
+        }
 
-            if (!clean) return;
-            if (clean === name) return;
-            if (clean === date) return;
-            if (isID(clean)) return; // 👈 elimina RGjkM2d
-
-            // el mensaje suele ser el texto más largo
-            if (clean.length > message.length) {
-                message = clean;
-            }
-        });
+        // 🚨 fallback SOLO si no se detecta columna
+        if (!message) {
+            message = cols.find(c =>
+                c &&
+                c !== name &&
+                c !== date &&
+                !/^[A-Za-z0-9]{4,}$/.test(c) // elimina IDs tipo RGjkM2d
+            ) || "";
+        }
 
         if (!message) return;
 
@@ -163,9 +167,9 @@ fetch(SHEET_URL)
         card.className = "card";
 
         card.innerHTML = `
-            <div class="name">${name || "Invitado"}</div>
+            <div class="name">${name}</div>
             <div class="message">${message}</div>
-            <div class="date">${date || ""}</div>
+            <div class="date">${date}</div>
         `;
 
         container.appendChild(card);
